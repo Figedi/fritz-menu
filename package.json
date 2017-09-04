@@ -23,7 +23,7 @@
     "appId": "de.figedi.FritzboxMenu",
     "files": [
       "dist/",
-      "resources/icons/",
+      "icons/",
       "node_modules/",
       "app.html",
       "main.prod.js",

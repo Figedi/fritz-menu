@@ -11,7 +11,6 @@
 
  */
 import { app, BrowserWindow, Tray } from 'electron';
-// import menubar from 'menubar';
 
 let tray;
 let mainWindow;
