@@ -1,0 +1,16 @@
+{
+  "name": "fritzbox-menu",
+  "productName": "FritzboxMenu",
+  "version": "1.0.0",
+  "description": "Menubar to show current bandwidth in fritzbox",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Felix Kaminski",
+    "email": "kaminski.felix@gmail.com"
+  },
+  "scripts": {
+    "postinstall": "npm rebuild --runtime=electron --target=1.7.5 --disturl=https://atom.io/download/atom-shell --build-from-source"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}

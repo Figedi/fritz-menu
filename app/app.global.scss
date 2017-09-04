@@ -1,0 +1,45 @@
+$fa-font-path: "~font-awesome/fonts";
+
+@import "~react-vis/dist/style.css";
+@import "~font-awesome/scss/font-awesome";
+
+.page-centered {
+  padding-top: 10px;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;
+
+  &.align-start {
+    align-items: flex-start;
+  }
+}
+
+.centered-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.error-message {
+  color: #5c5c5c;
+}
+
+.error-code {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.btn {
+  cursor: pointer;
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
