@@ -61,7 +61,12 @@
   "bugs": {
     "url": "https://github.com/Figedi/fritz-menu.git/issues"
   },
-  "keywords": ["fritzbox", "bandwidth", "electron", "menubar"],
+  "keywords": [
+    "fritzbox",
+    "bandwidth",
+    "electron",
+    "menubar"
+  ],
   "homepage": "https://github.com/Figedi/fritz-menu.git#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -122,7 +127,6 @@
     "fritz-lib": "github:Figedi/fritz-lib",
     "history": "^4.6.3",
     "localforage": "^1.5.0",
-    "menubar": "^5.2.3",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-hot-loader": "3.0.0-beta.6",

@@ -1,4 +1,4 @@
-/* eslint global-require: 0 */
+/* eslint global-require: 0, no-mixed-operators: 0 */
 
 /**
  * This module executes inside of electron's main process. You can start
@@ -10,10 +10,37 @@
  *
 
  */
-import menubar from 'menubar';
+import { app, BrowserWindow, Tray } from 'electron';
+// import menubar from 'menubar';
 
-let app = null;
-let mainWindow = null;
+let tray;
+let mainWindow;
+
+// Don't show the app in the doc
+app.dock.hide();
+
+app.on('ready', async () => {
+  createTray();
+  createWindow();
+
+  app.on('window-all-closed', () => {
+    // Respect the OSX convention of having the application in memory even
+    // after all windows have been closed
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+    await installExtensions();
+    mainWindow.openDevTools({ mode: 'detach' });
+  }
+});
+
+// Quit the app when the window is closed
+app.on('window-all-closed', () => {
+  app.quit();
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -38,44 +65,72 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-const mb = menubar({
-  icon: `${__dirname}/icons/16x16.png`,
-  index: `file://${__dirname}/app.html`,
-  width: 850,
-  height: 500,
-  tooltip: 'Fritzbox (Current Bandwidth Usage)',
-  resizable: false,
-  preloadWindow: true,
-  alwaysOnTop: process.env.NODE_ENV === 'development',
-});
+const createTray = () => {
+  tray = new Tray(`${__dirname}/icons/16x16.png`);
+  tray.setToolTip('Fritzbox (Current Bandwidth Usage)');
 
-/**
- * Add event listeners...
- */
+  tray.on('right-click', toggleWindow);
+  tray.on('double-click', toggleWindow);
+  tray.on('click', event => {
+    toggleWindow();
 
-mb.on('ready', async () => {
-  mainWindow = mb.window;
-  app = mb.app;
-
-  app.on('window-all-closed', () => {
-    // Respect the OSX convention of having the application in memory even
-    // after all windows have been closed
-    if (process.platform !== 'darwin') {
-      app.quit();
+    // Show devtools when command clicked
+    if (mainWindow.isVisible() && process.defaultApp && event.metaKey) {
+      mainWindow.openDevTools({ mode: 'detach' });
     }
   });
+};
 
-  mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.show();
-    mainWindow.focus();
+const getWindowPosition = () => {
+  const windowBounds = mainWindow.getBounds();
+  const trayBounds = tray.getBounds();
+
+  // Center window horizontally below the tray icon
+  const x = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2);
+
+  // Position window 4 pixels vertically below the tray icon
+  const y = Math.round(trayBounds.y + trayBounds.height + 4);
+
+  return { x, y };
+};
+
+const createWindow = () => {
+  mainWindow = new BrowserWindow({
+    width: 850,
+    height: 500,
+    show: process.env.NODE_ENV === 'development',
+    alwaysOnTop: process.env.NODE_ENV === 'development',
+    frame: false,
+    fullscreenable: false,
+    resizable: false,
+    transparent: true,
+    webPreferences: {
+      // Prevents renderer process code from not running when window is
+      // hidden
+      backgroundThrottling: false,
+    },
   });
+  mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  // Hide the window when it loses focus
+  mainWindow.on('blur', () => {
+    if (!mainWindow.webContents.isDevToolsOpened()) {
+      mainWindow.hide();
+    }
   });
+};
 
-  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-    await installExtensions();
+const toggleWindow = () => {
+  if (mainWindow.isVisible()) {
+    mainWindow.hide();
+  } else {
+    showWindow();
   }
-  mainWindow.openDevTools({ mode: 'detach' });
-});
+};
+
+const showWindow = () => {
+  const position = getWindowPosition();
+  mainWindow.setPosition(position.x, position.y, false);
+  mainWindow.show();
+  mainWindow.focus();
+};
