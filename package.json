@@ -23,6 +23,7 @@
     "appId": "de.figedi.FritzboxMenu",
     "files": [
       "dist/",
+      "resources/icons/",
       "node_modules/",
       "app.html",
       "main.prod.js",
@@ -80,6 +81,7 @@
     "concurrently": "^3.5.0",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.5",
+    "devtron": "^1.4.0",
     "dotenv-safe": "^4.0.4",
     "electron": "^1.7.5",
     "electron-builder": "^19.22.1",

@@ -2,22 +2,16 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
-import Bootloader from './containers/Bootloader';
-import Bootscreen from './components/Bootscreen';
+import { Bootloader, Bootscreen } from './components';
 import { configureStore, history } from './store/configureStore';
 import './app.global.scss';
 
-let store;
-
+const store = configureStore();
 render(
   <AppContainer>
-    <Bootloader
-      persistor={configureStore()}
-      render={(reduxStore, ready) => {
-        store = reduxStore;
-        return ready ? <Root store={store} history={history} /> : <Bootscreen />;
-      }}
-    />
+    <Bootloader persistor={store}>
+      {ready => (ready ? <Root store={store} history={history} /> : <Bootscreen />)}
+    </Bootloader>
   </AppContainer>,
   document.getElementById('root'),
 );

@@ -1,9 +1,9 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-export default class Bootloader extends React.PureComponent {
+export default class Bootloader extends PureComponent {
   static propTypes = {
-    render: PropTypes.func.isRequired,
+    children: PropTypes.func.isRequired,
     // basic store stuff, ignore other props
     persistor: PropTypes.shape({
       subscribe: PropTypes.func,
@@ -31,6 +31,6 @@ export default class Bootloader extends React.PureComponent {
   }
 
   render() {
-    return this.props.render(this.props.persistor, this.state.ready);
+    return this.props.children(this.state.ready);
   }
 }

@@ -2,7 +2,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware } from 'react-router-redux';
-import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import localForage from 'localforage';
@@ -23,13 +22,6 @@ function configureStore(initialState) {
 
   // Thunk Middleware
   middleware.push(thunk);
-
-  // Logging Middleware
-  const logger = createLogger({
-    level: 'info',
-    collapsed: true,
-  });
-  middleware.push(logger);
 
   // Router Middleware
   const router = routerMiddleware(history);
