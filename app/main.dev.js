@@ -11,9 +11,23 @@
 
  */
 import { app, BrowserWindow, Tray } from 'electron';
+import { autoUpdater } from 'electron-updater';
 
 let tray;
 let mainWindow;
+
+if (process.env.NODE_ENV === 'production') {
+  const sourceMapSupport = require('source-map-support');
+  sourceMapSupport.install();
+}
+
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+  require('electron-debug')();
+  const path = require('path');
+  const p = path.join(__dirname, '..', 'app', 'node_modules');
+  require('module').globalPaths.push(p);
+  require('electron-context-menu')();
+}
 
 // Don't show the app in the doc
 app.dock.hide();
@@ -30,6 +44,11 @@ app.on('ready', async () => {
     }
   });
 
+  if (process.env.NODE_ENV === 'production') {
+    // activate the auto-updater, this checks on github for the latest releases
+    autoUpdater.checkForUpdates();
+  }
+
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
     mainWindow.openDevTools({ mode: 'detach' });
@@ -40,19 +59,6 @@ app.on('ready', async () => {
 app.on('window-all-closed', () => {
   app.quit();
 });
-
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-}
-
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-  require('electron-debug')();
-  const path = require('path');
-  const p = path.join(__dirname, '..', 'app', 'node_modules');
-  require('module').globalPaths.push(p);
-  require('electron-context-menu')();
-}
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
