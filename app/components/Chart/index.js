@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import dateFormat from 'dateformat';
 import PropTypes from 'prop-types';
 import { ticks } from 'd3-array';
 import {
@@ -25,6 +26,20 @@ class Graph extends PureComponent {
   };
 
   resetCrosshair = () => this.setState({ crosshairValues: [] });
+
+  formatCrosshairTitle = items => ({
+    title: 'X',
+    value: dateFormat(items[0].x, 'h:MM:ss TT'),
+  });
+
+  formatCrosshairItems = items => {
+    const { data } = this.props;
+    data.series.map(seriesData => seriesData.id);
+    return items.map((d, i) => ({
+      title: data.series[i].id,
+      value: d.y.toFixed(2),
+    }));
+  };
 
   render() {
     const { data, title } = this.props;
@@ -56,7 +71,11 @@ class Graph extends PureComponent {
                 {...i === 0 && { onNearestX: this.setCrosshair }}
               />),
             )}
-            <Crosshair values={this.state.crosshairValues} />
+            <Crosshair
+              values={this.state.crosshairValues}
+              titleFormat={this.formatCrosshairTitle}
+              itemsFormat={this.formatCrosshairItems}
+            />
           </XYPlot>
         </div>
         <div className={styles.legend}>
