@@ -1,22 +1,15 @@
-import AutoLaunch from 'auto-launch';
+import { remote } from 'electron';
 
-const fritzLauncher = new AutoLaunch({
-  name: 'Fritz Menulet',
-  mac: {
-    useLaunchAgent: true,
-  },
-});
-
-export async function enable() {
-  const startupState = await getState();
-  return startupState ? true : fritzLauncher.enable();
+export function enable() {
+  const startupState = getState();
+  return startupState ? true : remote.app.setLoginItemSettings({ openAtLogin: true });
 }
 
-export async function disable() {
-  const startupState = await getState();
-  return startupState ? fritzLauncher.disable : true;
+export function disable() {
+  const startupState = getState();
+  return startupState ? remote.app.setLoginItemSettings({ openAtLogin: false }) : true;
 }
 
-export async function getState() {
-  return fritzLauncher.isEnabled();
+export function getState() {
+  return remote.app.getLoginItemSettings().openAtLogin;
 }
