@@ -21,7 +21,8 @@ git clone git@github.com:Figedi/fritz-menu.git && cd fritz-menu
 npm i
 
 # Start dev task
-npm run dev```
+npm run dev
+```
 
 ## Troubleshooting
 
