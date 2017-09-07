@@ -7,7 +7,7 @@ import { fritz as fritzApi } from '../api';
 import { FRITZ_ACTIONS } from '../constants';
 import { fritz } from '../actions';
 import { promiseHelpers } from '../utils';
-import { getToken, getRehydrateTimeout, getConfig } from '../selectors';
+import { getToken, getTokenObj, getRehydrateTimeout, getConfig } from '../selectors';
 
 const CONSTANTS = promiseHelpers.getPendingSymbols(FRITZ_ACTIONS);
 
@@ -40,27 +40,36 @@ function* startRehydrateInterval() {
  * while the intention to execute the fn is queued indefinitely.
  *
  * Usecase: Schedule a token retrieval, then a graph-data retrieval which directly
- * depends on the token retrieval's response.
+ * depends on the token retrieval's response (and thus the store's state).
  *
  * @method applyActionPayload
  * @param  {String}           type   The action-type
  * @return {Array<any>}              Returns the arguments or empty array
  */
 function* applyActionPayload(type) {
-  if (type === CONSTANTS.getData.$symbol) {
-    const { token, config: { ip } } = yield all({
-      config: select(getConfig),
-      token: select(getToken),
-    });
-    return [ip, token];
-  } else if (type === CONSTANTS.getToken.$symbol) {
-    const { ip, username, password } = yield select(getConfig);
-    return [ip, username, password];
+  switch (type) {
+    // standard getter just need the current token / credentials
+    case CONSTANTS.getData.$symbol:
+    case CONSTANTS.getOS.$symbol: {
+      const { tokenObj, config: { ip, username, password } } = yield all({
+        config: select(getConfig),
+        tokenObj: select(getTokenObj),
+      });
+      return [{ base: ip, username, password }, tokenObj];
+    }
+    // getToken needs the credentials
+    case CONSTANTS.getToken.$symbol: {
+      const { ip, username, password } = yield select(getConfig);
+      return [{ base: ip, username, password }];
+    }
+    // empty payload for other actions
+    default:
+      return [];
   }
-  return []; // empty payload for other actions
 }
 
 function* handleRequest({ payload, ...action }, tryRearm = true) {
+  console.log('handleRequest', payload);
   if (!payload) {
     return {};
   }
@@ -81,11 +90,11 @@ function* handleRequest({ payload, ...action }, tryRearm = true) {
     if (error.name === 'UnauthorizedError' && tryRearm) {
       console.info(`UnauthorizedError@${method}, trying to rearm, then replay this action`);
       yield put(fritz.resetToken());
-      yield put(fritz.resetData());
       try {
         // first re-get the token
         const args = yield call(applyActionPayload, CONSTANTS.getToken.$symbol);
-        yield call(fritzApi.getToken, ...args);
+        const response = yield call(fritzApi.getToken, ...args);
+        yield put({ type: CONSTANTS.getToken.fulfilled, payload: { response } });
         // then replay the request
         return yield call(handleRequest, { payload, ...action }, false);
       } catch (e) {
@@ -104,7 +113,7 @@ function* handleRequest({ payload, ...action }, tryRearm = true) {
 
 function* watchRequests() {
   fritzChannel = yield actionChannel(
-    [CONSTANTS.getToken.$symbol, CONSTANTS.getData.$symbol],
+    [CONSTANTS.getToken.$symbol, CONSTANTS.getData.$symbol, CONSTANTS.getOS.$symbol],
     buffers.sliding(5),
   );
   let errors = 0;
@@ -116,32 +125,32 @@ function* watchRequests() {
     const { error } = yield call(handleRequest, action);
     if (error) {
       errors += 1;
-      console.info('Last request resulted in errors, adding +1', errors);
       lastError = error;
+    } else {
+      // reset errors upon first successful request
+      errors = 0;
     }
   }
   yield put(fritz.setError(lastError)); // too many errors, emit error + clear channel afterwards
 }
 
-function* watchStart() {
+function* rehydrateStart() {
   while (true) {
     yield take(CONSTANTS.startInterval.$symbol);
     // start with fresh request watcher and start rehydrating periodically
-    const requestWatchTask = yield fork(watchRequests);
     const rehydrateTask = yield fork(startRehydrateInterval);
     yield take([CONSTANTS.setError.$symbol, CONSTANTS.stopInterval.$symbol]);
     yield cancel(rehydrateTask);
-    yield cancel(requestWatchTask);
   }
 }
 
 function* watchRehydrate() {
   const action = yield take(REHYDRATE);
   if (get(action, 'payload.fritz.token')) {
-    yield fork(rehydrate, action.payload.fritz.token);
+    yield fork(rehydrate);
   }
 }
 
 export default function* root() {
-  yield all([call(watchStart), call(watchRehydrate)]);
+  yield all([call(watchRehydrate), call(watchRequests), call(rehydrateStart)]);
 }

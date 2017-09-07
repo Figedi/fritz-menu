@@ -39,6 +39,7 @@ export const FRITZ_ACTIONS = {
   startInterval: 'FRITZ_START_INTERVAL',
   getData: 'FRITZ_DATA',
   getToken: 'FRITZ_TOKEN',
+  getOS: 'FRITZ_OS',
   setError: 'FRITZ_ERROR',
   resetData: 'FRITZ_RESET_DATA',
   resetToken: 'FRITZ_RESET_TOKEN',

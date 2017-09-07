@@ -30,3 +30,7 @@ export function getToken() {
 export function getData() {
   return { type: FRITZ_ACTIONS.getData, payload: { method: 'getData' } };
 }
+
+export function getOS() {
+  return { type: FRITZ_ACTIONS.getOS, payload: { method: 'getOS' } };
+}
