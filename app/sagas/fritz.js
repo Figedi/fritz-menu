@@ -69,7 +69,6 @@ function* applyActionPayload(type) {
 }
 
 function* handleRequest({ payload, ...action }, tryRearm = true) {
-  console.log('handleRequest', payload);
   if (!payload) {
     return {};
   }

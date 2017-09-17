@@ -1,7 +1,7 @@
 {
   "name": "fritzbox-menu",
   "productName": "FritzboxMenu",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Menubar to show current bandwidth in fritzbox",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -64,11 +64,16 @@
   "bugs": {
     "url": "https://github.com/Figedi/fritz-menu.git/issues"
   },
-  "keywords": ["fritzbox", "bandwidth", "electron", "menubar"],
+  "keywords": [
+    "fritzbox",
+    "bandwidth",
+    "electron",
+    "menubar"
+  ],
   "homepage": "https://github.com/Figedi/fritz-menu.git#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "^8.0.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -86,11 +91,11 @@
     "css-loader": "^0.28.7",
     "devtron": "^1.4.0",
     "dotenv-safe": "^4.0.4",
-    "electron": "^1.7.5",
-    "electron-builder": "^19.27.3",
+    "electron": "^1.7.6",
+    "electron-builder": "^19.27.7",
     "electron-context-menu": "^0.9.1",
     "electron-devtools-installer": "^2.2.0",
-    "eslint": "^4.6.1",
+    "eslint": "^4.7.0",
     "eslint-config-airbnb": "^15.0.1",
     "eslint-formatter-pretty": "^1.3.0",
     "eslint-import-resolver-webpack": "^0.8.3",
@@ -106,15 +111,15 @@
     "minimist": "^1.2.0",
     "node-sass": "^4.5.3",
     "redux-logger": "^3.0.6",
-    "rimraf": "^2.6.1",
+    "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.1",
     "stylelint": "^8.1.1",
     "stylelint-config-standard": "^17.0.0",
     "url-loader": "^0.5.8",
-    "webpack": "^3.5.5",
+    "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.8.2",
-    "webpack-dev-server": "^2.7.1",
+    "webpack-dev-server": "^2.8.2",
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
@@ -129,8 +134,9 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-hot-loader": "3.0.0-beta.6",
-    "react-modal": "^2.3.1",
+    "react-modal": "^2.3.2",
     "react-photonkit": "^0.4.1",
+    "react-portal-tooltip": "^1.3.0",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
@@ -143,7 +149,7 @@
     "redux-saga": "^0.15.6",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
-    "source-map-support": "^0.4.17"
+    "source-map-support": "^0.4.18"
   },
   "devEngines": {
     "node": ">=7.x",
