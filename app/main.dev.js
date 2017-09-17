@@ -11,7 +11,7 @@
 
  */
 import { app, BrowserWindow, Tray } from 'electron';
-import { autoUpdater } from 'electron-updater';
+import tryAutoUpdate from './updater';
 
 let tray;
 let mainWindow;
@@ -46,7 +46,7 @@ app.on('ready', async () => {
 
   if (process.env.NODE_ENV === 'production') {
     // activate the auto-updater, this checks on github for the latest releases
-    autoUpdater.checkForUpdates();
+    tryAutoUpdate();
   }
 
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
