@@ -5,6 +5,8 @@ Menubar application to show current fritzbox bandwidth-usage
 
 This menubar application lets you see the current bandwidth-usage, directly from your fritzbox-router. 
 
+![N|Example](https://i.imgur.com/MnEplAA.gif)
+
 ## Download
 
 I try to update the releases as often as possible. See the releases page for prebuilt binaries.
