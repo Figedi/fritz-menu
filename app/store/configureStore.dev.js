@@ -62,7 +62,7 @@ const configureStore = initialState => {
   // Create Store
   const store = createStore(rootReducer, initialState, enhancer);
 
-  sagaMiddleware.run(rootSaga);
+  let sagaTask = sagaMiddleware.run(rootSaga);
 
   persistStore(store, {
     storage: localForage,
@@ -70,10 +70,19 @@ const configureStore = initialState => {
   });
 
   if (module.hot) {
-    module.hot.accept(
-      '../reducers',
-      () => store.replaceReducer(require('../reducers')), // eslint-disable-line global-require
-    );
+    /* eslint-disable global-require, promise/catch-or-return, promise/always-return */
+    module.hot.accept('../reducers', () => store.replaceReducer(require('../reducers')));
+
+    module.hot.accept('../sagas', () => {
+      const getNewSagas = require('../sagas');
+      sagaTask.cancel();
+      sagaTask.done.then(() => {
+        sagaTask = sagaMiddleware.run(function* replacedSaga() {
+          yield getNewSagas();
+        });
+      });
+    });
+    /* eslint-enable global-require */
   }
 
   return store;

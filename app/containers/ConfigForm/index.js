@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import styles from './styles.scss';
 
-// import * as configActions from '../../actions/config';
+import { electron } from '../../actions';
 
 function mapStateToProps(state) {
   return {
@@ -15,6 +15,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch => ({
+  checkForUpdates: () => dispatch(electron.checkForUpdates()),
   back: () => dispatch(push('/')),
 });
 
@@ -27,27 +28,18 @@ const validate = values => {
 };
 
 /* eslint-disable react/prop-types */
-const renderField = ({ input, placeholder, label, type, meta: { touched, error, warning } }) =>
-  (<div className="form-group">
-    <label htmlFor={input.name}>
-      {label}
-    </label>
+const renderField = ({ input, placeholder, label, type, meta: { touched, error, warning } }) => (
+  <div className="form-group">
+    <label htmlFor={input.name}>{label}</label>
     <input {...input} placeholder={placeholder || label} type={type} className="form-control" />
-    {touched &&
-      ((error &&
-        <span>
-          {error}
-        </span>) ||
-        (warning &&
-          <span>
-            {warning}
-          </span>))}
-  </div>);
+    {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
+  </div>
+);
 
 /* eslint-enable react/prop-types */
 
-const ConfigForm = ({ handleSubmit, back, pristine, submitting }) =>
-  (<form className={styles.form} onSubmit={handleSubmit}>
+const ConfigForm = ({ handleSubmit, checkForUpdates, back, pristine, submitting }) => (
+  <form className={styles.form} onSubmit={handleSubmit}>
     <div>
       <Field
         name="ip"
@@ -81,17 +73,25 @@ const ConfigForm = ({ handleSubmit, back, pristine, submitting }) =>
       <button className="btn btn-default" type="button" onClick={back}>
         Abort
       </button>
+      {process.env.NODE_ENV === 'production' && (
+        <button type="button" className="btn btn-default" onClick={checkForUpdates}>
+          Check For updates
+        </button>
+      )}
+
       <button className="btn btn-positive" disabled={pristine || submitting} type="submit">
         Save
       </button>
     </div>
-  </form>);
+  </form>
+);
 
 ConfigForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   back: PropTypes.func.isRequired,
+  checkForUpdates: PropTypes.func.isRequired,
 };
 
 const enhancer = compose(

@@ -25,3 +25,8 @@ export function getPendingSymbols(constants, ...args) {
     return { ...acc, [key]: value };
   }, {});
 }
+
+export const sleep = (time, { shouldReject = false, returnStatus = undefined }) =>
+  new Promise((resolve, reject) =>
+    setTimeout(() => (shouldReject ? reject(new Error('Timeout')) : resolve(returnStatus)), time),
+  );

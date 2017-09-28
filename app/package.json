@@ -1,7 +1,7 @@
 {
   "name": "fritzbox-menu",
   "productName": "FritzboxMenu",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Menubar to show current bandwidth in fritzbox",
   "main": "./main.prod.js",
   "author": {

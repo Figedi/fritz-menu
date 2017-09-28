@@ -7,7 +7,8 @@ import Layout from '../../Layout';
 import ConfigForm from '../../ConfigForm';
 import styles from './styles.scss';
 import { OSSelector } from '../../../selectors';
-import * as mapDispatchToProps from '../../../actions/fritz';
+import { fritz as mapDispatchToProps } from '../../../actions';
+import packageJSON from '../../../package.json';
 
 const mapStateToProps = state => ({
   OS: OSSelector(state),
@@ -20,7 +21,7 @@ class Config extends PureComponent {
   };
 
   static defaultProps = {
-    OS: null,
+    OS: 'n/a',
   };
 
   componentDidMount() {
@@ -35,12 +36,13 @@ class Config extends PureComponent {
     return (
       <Layout buttonLink="/" buttonIcon="home">
         <div className={`window-content window-content--flex-inner ${styles.wrapper}`}>
-          {OS &&
-            <div className={styles.info}>
-              <p>
-                Connected Fritzbox@{OS}
-              </p>
-            </div>}
+          <div className={styles.info}>
+            <p>
+              <span>FritzOS: {OS}</span>
+              <br />
+              App-Version: {packageJSON.version}
+            </p>
+          </div>
           <ConfigForm onSubmit={noop} />
         </div>
       </Layout>

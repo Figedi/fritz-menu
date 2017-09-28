@@ -44,3 +44,7 @@ export const FRITZ_ACTIONS = {
   resetData: 'FRITZ_RESET_DATA',
   resetToken: 'FRITZ_RESET_TOKEN',
 };
+
+export const ELECTRON_ACTIONS = {
+  checkForUpdates: 'ELECTRON_CHECK_FOR_UPDATES',
+};

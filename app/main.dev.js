@@ -10,8 +10,8 @@
  *
 
  */
-import { app, BrowserWindow, Tray } from 'electron';
-import tryAutoUpdate from './updater';
+import { app, BrowserWindow, Tray, ipcMain } from 'electron';
+import { tryAutoUpdate, tryUpdate } from './updater';
 
 let tray;
 let mainWindow;
@@ -47,6 +47,15 @@ app.on('ready', async () => {
   if (process.env.NODE_ENV === 'production') {
     // activate the auto-updater, this checks on github for the latest releases
     tryAutoUpdate();
+
+    ipcMain.on('update', async event => {
+      try {
+        const returnStatus = await tryUpdate();
+        event.sender.send('update-reply', { returnStatus });
+      } catch (e) {
+        event.sender.send('update-reply', { returnStatus: false, error: e });
+      }
+    });
   }
 
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
