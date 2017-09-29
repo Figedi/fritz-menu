@@ -12,6 +12,7 @@
  */
 import { app, BrowserWindow, Tray, ipcMain } from 'electron';
 import { tryAutoUpdate, tryUpdate } from './updater';
+import { envHelpers } from './utils';
 
 let tray;
 let mainWindow;
@@ -44,7 +45,7 @@ app.on('ready', async () => {
     }
   });
 
-  if (process.env.NODE_ENV === 'production') {
+  if (envHelpers.isProdLike) {
     // activate the auto-updater, this checks on github for the latest releases
     tryAutoUpdate();
 
@@ -53,7 +54,7 @@ app.on('ready', async () => {
         const returnStatus = await tryUpdate();
         event.sender.send('update-reply', { returnStatus });
       } catch (e) {
-        event.sender.send('update-reply', { returnStatus: false, error: e });
+        event.sender.send('update-reply', { returnStatus: false, error: e.message });
       }
     });
   }

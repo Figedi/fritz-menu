@@ -6,10 +6,12 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import styles from './styles.scss';
 
+import { envHelpers } from '../../utils';
 import { electron } from '../../actions';
 
 function mapStateToProps(state) {
   return {
+    updateButtonEnabled: state.ui.updateButtonEnabled,
     initialValues: state.config,
   };
 }
@@ -38,7 +40,14 @@ const renderField = ({ input, placeholder, label, type, meta: { touched, error, 
 
 /* eslint-enable react/prop-types */
 
-const ConfigForm = ({ handleSubmit, checkForUpdates, back, pristine, submitting }) => (
+const ConfigForm = ({
+  handleSubmit,
+  updateButtonEnabled,
+  checkForUpdates,
+  back,
+  pristine,
+  submitting,
+}) => (
   <form className={styles.form} onSubmit={handleSubmit}>
     <div>
       <Field
@@ -73,8 +82,13 @@ const ConfigForm = ({ handleSubmit, checkForUpdates, back, pristine, submitting 
       <button className="btn btn-default" type="button" onClick={back}>
         Abort
       </button>
-      {process.env.NODE_ENV === 'production' && (
-        <button type="button" className="btn btn-default" onClick={checkForUpdates}>
+      {envHelpers.isProdLike && (
+        <button
+          type="button"
+          disabled={!updateButtonEnabled}
+          className="btn btn-default"
+          onClick={checkForUpdates}
+        >
           Check For updates
         </button>
       )}
@@ -90,6 +104,7 @@ ConfigForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
+  updateButtonEnabled: PropTypes.bool.isRequired,
   back: PropTypes.func.isRequired,
   checkForUpdates: PropTypes.func.isRequired,
 };

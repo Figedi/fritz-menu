@@ -48,3 +48,7 @@ export const FRITZ_ACTIONS = {
 export const ELECTRON_ACTIONS = {
   checkForUpdates: 'ELECTRON_CHECK_FOR_UPDATES',
 };
+
+export const UI_ACTIONS = {
+  toggleUpdateButton: 'UI_TOGGLE_UPDATE_BUTTON',
+};

@@ -1,8 +1,7 @@
 import { call, select, take, fork, put, cancel, actionChannel, all } from 'redux-saga/effects';
-import { buffers, delay, eventChannel } from 'redux-saga';
+import { buffers, delay } from 'redux-saga';
 import { REHYDRATE } from 'redux-persist/constants';
 import { get } from 'lodash';
-import { ipcRenderer } from 'electron';
 
 import { fritz as fritzApi } from '../api';
 import { FRITZ_ACTIONS } from '../constants';

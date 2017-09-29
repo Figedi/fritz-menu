@@ -42,7 +42,7 @@ function configureStore(initialState) {
 
   persistStore(store, {
     storage: localForage,
-    blacklist: ['graph', 'routing'],
+    blacklist: ['ui', 'graph', 'routing'],
   });
 
   return store;

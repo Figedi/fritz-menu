@@ -66,7 +66,7 @@ const configureStore = initialState => {
 
   persistStore(store, {
     storage: localForage,
-    blacklist: ['graph', 'routing'],
+    blacklist: ['ui', 'graph', 'routing'],
   });
 
   if (module.hot) {
