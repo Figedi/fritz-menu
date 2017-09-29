@@ -123,6 +123,7 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
+    "common-tags": "^1.4.0",
     "d3-array": "^1.2.1",
     "dateformat": "^3.0.2",
     "electron-debug": "^1.2.0",
